@@ -26,9 +26,9 @@ export default function Countrydetails({ data, setData }) {
   }, []);
 
   useEffect(() => {
-    if (!data.country_id) return;
+    if (!data.countryId) return;
 
-    const url = `https://reactinterviewtask.codetentaclestechnologies.in/api/api/state-list?country_id=${data.country_id}`;
+    const url = `https://reactinterviewtask.codetentaclestechnologies.in/api/api/state-list?country_id=${data.countryId}`;
 
     fetch(url, {
       method: "GET",
@@ -45,7 +45,7 @@ export default function Countrydetails({ data, setData }) {
         setStates(mappedStates);
       })
       .catch((err) => console.error("State fetch error:", err));
-  }, [data.country_id]);
+  }, [data.countryId]);
 
   return (
     <>
@@ -67,12 +67,12 @@ export default function Countrydetails({ data, setData }) {
                   className="basic-single text-left text-sm text-gray-700 rounded border border-gray-200"
                   classNamePrefix="select"
                   options={countries}
-                  value={countries.find((c) => c.value === data.country_id) || null}
+                  value={countries.find((c) => c.value === data.countryId) || null}
                   onChange={(selected) =>
                     setData({
                       ...data,
-                      country_id: selected.value,
-                      state_id: null,
+                      countryId: selected.value,
+                      stateId: null,
                     })
                   }
                 />
@@ -89,14 +89,14 @@ export default function Countrydetails({ data, setData }) {
                   className="basic-single text-left text-sm text-gray-700 rounded border border-gray-200"
                   classNamePrefix="select"
                   options={states}
-                  value={states.find((s) => s.value === data.state_id) || null}
+                  value={states.find((s) => s.value === data.stateId) || null}
                   onChange={(selected) =>
                     setData({
                       ...data,
-                      state_id: selected.value,
+                      stateId: selected.value,
                     })
                   }
-                  isDisabled={!data.country_id}
+                  isDisabled={!data.countryId}
                 />
               </div>
             </div>

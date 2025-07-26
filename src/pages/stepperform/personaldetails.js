@@ -30,7 +30,7 @@ export default function Personaldetails({ data, setData }) {
                                                 if (file) {
                                                     const reader = new FileReader();
                                                     reader.onloadend = () => {
-                                                        setData({ ...data, profileImage: reader.result });
+                                                        setData({ ...data, photo: reader.result });
                                                     };
                                                     reader.readAsDataURL(file);
                                                 }
@@ -88,11 +88,11 @@ export default function Personaldetails({ data, setData }) {
                                 </label>
                                 <input
                                     className="w-full px-3 py-3 text-sm leading-tight text-gray-700 border border-gray-200 rounded appearance-none focus:outline-none focus:shadow-outline"
-                                    id="number"
+                                    id="phoneNumber"
                                     type="number"
-                                    placeholder="Phone Number"
-                                    value={data.phone || ''}
-                                    onChange={(e) => setData({ ...data, phone: e.target.value })}
+                                    placeholder="phoneNumber"
+                                    value={data.phoneNumber || ''}
+                                    onChange={(e) => setData({ ...data, phoneNumber: e.target.value })}
                                 />
                             </div>
                         </div>

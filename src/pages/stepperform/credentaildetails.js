@@ -45,8 +45,8 @@ export default function Credentaildetails({ data, setData }) {
                                     id="c_password"
                                     type="password"
                                     placeholder="Confirm Password"
-                                    value={data.confirmPassword || ''}
-                                    onChange={(e) => setData({ ...data, confirmPassword: e.target.value })}
+                                    value={data.password_confirmation || ''}
+                                    onChange={(e) => setData({ ...data, password_confirmation: e.target.value })}
                                 />
                             </div>
                         </div>
