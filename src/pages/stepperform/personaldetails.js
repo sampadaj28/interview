@@ -90,7 +90,7 @@ export default function Personaldetails({ data, setData }) {
                                     className="w-full px-3 py-3 text-sm leading-tight text-gray-700 border border-gray-200 rounded appearance-none focus:outline-none focus:shadow-outline"
                                     id="phoneNumber"
                                     type="number"
-                                    placeholder="phoneNumber"
+                                    placeholder="Phone Number"
                                     value={data.phoneNumber || ''}
                                     onChange={(e) => setData({ ...data, phoneNumber: e.target.value })}
                                 />

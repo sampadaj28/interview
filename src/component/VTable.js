@@ -107,15 +107,15 @@ const Table = ({
       </table>
 
       <Stack spacing={2} direction="row" className="mt-3 flex justify-between">
-     <select
-  className="p-2 bg-primaryDarkCards border border-primaryGray-700 text-sm rounded"
-  value={rowsPerPage}
-  onChange={(e) => handleRowsPerPageChange(Number(e.target.value))}  // FIXED LINE
->
-  <option value={10}>10 per page</option>
-  <option value={20}>20 per page</option>
-  <option value={50}>50 per page</option>
-</select>
+        <select
+          className="p-2 bg-primaryDarkCards border border-primaryGray-700 text-sm rounded"
+          value={rowsPerPage}
+          onChange={handleRowsPerPageChange}
+        >
+          <option value={10}>10 per page</option>
+          <option value={20}>20 per page</option>
+          <option value={50}>50 per page</option>
+        </select>
 
 
         <Pagination

@@ -1,59 +1,35 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import Table from "../../component/VTable";
 import Layout from "../../component/Layout";
 import { Link } from "react-router-dom";
+import { useGetProductListQuery } from "../../services/adminApi"; // adjust path if needed
 
 export default function Product() {
-  const [products, setProducts] = useState([]);
-  const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const fetchProducts = async () => {
-    try {
-      setIsLoading(true);
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `https://reactinterviewtask.codetentaclestechnologies.in/api/api/product-list?page=${page}&per_page=${rowsPerPage}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  const token = localStorage.getItem("token");
 
-      const result = await res.json();
-      if (res.ok && result.data) {
-        const transformed = result.data.map((item, index) => ({
-          srno: (page - 1) * rowsPerPage + index + 1,
-          id: item.id,
-          name: item.name || "-",
-          productimg: item.image || "",
-          description: item.description || "-",
-          Price: item.price ? `Rs.${item.price}/-` : "-",
-        }));
+  const {
+    data: result,
+    isLoading,
+    isError,
+    error,
+  } = useGetProductListQuery({ page, perPage: rowsPerPage, token });
 
-        setProducts(transformed);
-        setTotalPages(result.lastPage || 1);
-      } else {
-        setError(result.message || "Failed to load products");
-      }
-    } catch (err) {
-      setError("Network error");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const products = useMemo(() => {
+    if (!result?.data) return [];
+    return result.data.map((item, index) => ({
+      srno: (page - 1) * rowsPerPage + index + 1,
+      id: item.id,
+      name: item.name || "-",
+      productimg: item.image || "",
+      description: item.description || "-",
+      Price: item.price ? `Rs.${item.price}/-` : "-",
+    }));
+  }, [result, page, rowsPerPage]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [page, rowsPerPage]);
-
-  const handlePageChange = (event, newPage) => {
+  const handlePageChange = (_, newPage) => {
     setPage(newPage);
   };
 
@@ -99,16 +75,20 @@ export default function Product() {
               to="/Add-product"
               className="rounded-lg px-4 py-2 bg-green-700 text-green-100 hover:bg-green-800 duration-300"
             >
-              Add Product
+              Add
             </Link>
           </div>
-          {error && <p className="text-red-500 mb-3">{error}</p>}
+          {isError && (
+            <p className="text-red-500 mb-3">
+              {error?.data?.message || "Failed to load products"}
+            </p>
+          )}
           <Table
             cols={columns}
             data={products}
             rowsPerPage={rowsPerPage}
             page={page}
-            totalPages={totalPages}
+            totalPages={result?.lastPage || 1}
             handlePageChange={handlePageChange}
             handleRowsPerPageChange={handleRowsPerPageChange}
             isTableLoading={isLoading}

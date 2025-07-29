@@ -1,67 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useMemo } from "react";
 import Table from "../component/VTable";
 import Layout from "../component/Layout";
 import { Link } from "react-router-dom";
 import { Trash2 } from "lucide-react";
+import { useGetUserListQuery, useDeleteUserMutation } from "../services/adminApi";
 
 export default function List() {
-  const [users, setUsers] = useState([]);
-  const [error, setError] = useState("");
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
 
-  const handlePageChange = (event, newPage) => {
-    setPage(newPage);
-  };
+  const token = localStorage.getItem("token");
 
-  const handleRowsPerPageChange = (newRowsPerPage) => {
-    setRowsPerPage(newRowsPerPage);
-    setPage(1); // reset to first page when changing rows per page
-  };
+  const {
+    data: result,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useGetUserListQuery({ page, perPage: rowsPerPage, token });
 
-  const fetchUsers = async () => {
+  const [deleteUser] = useDeleteUserMutation();
+
+  const users = useMemo(() => {
+    if (!result || !result.data) return [];
+    return result.data.map((user, index) => ({
+      id: user.id,
+      srno: (page - 1) * rowsPerPage + index + 1,
+      name: user.name || "-",
+      email: user.email || "-",
+      phoneno: user.phone || "-",
+      gender: user.gender || "-",
+    }));
+  }, [result, page, rowsPerPage]);
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+    if (!confirmDelete) return;
+
     try {
-      setIsLoading(true);
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `https://reactinterviewtask.codetentaclestechnologies.in/api/api/user-list?page=${page}&per_page=${rowsPerPage}`,
-        {
-          method: "GET",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      const result = await res.json();
-      if (result && result.data) {
-        const transformed = result.data.map((user, index) => ({
-          id: user.id,
-          srno: (page - 1) * rowsPerPage + index + 1,
-          name: user.name || "-",
-          email: user.email || "-",
-          phoneno: user.phone || "-",
-          gender: user.gender || "-",
-        }));
-
-        setUsers(transformed);
-        setTotalPages(result.lastPage || 1);
-      } else {
-        setError(result.message || "Failed to load users");
-      }
+      await deleteUser({ id, token }).unwrap();
+      refetch(); // refresh user list after deletion
     } catch (err) {
-      setError("Network error");
-    } finally {
-      setIsLoading(false);
+      alert(err?.data?.message || "Delete failed");
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, [page, rowsPerPage]);
+  const handlePageChange = (_, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleRowsPerPageChange = (event) => {
+    setRowsPerPage(Number(event.target.value));
+    setPage(1);
+  };
 
   const columns = [
     { title: "#", dataIndex: "srno", key: "srno" },
@@ -83,34 +74,6 @@ export default function List() {
     },
   ];
 
-  const handleDelete = async (id) => {
-    const confirm = window.confirm("Are you sure you want to delete this user?");
-    if (!confirm) return;
-
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `https://reactinterviewtask.codetentaclestechnologies.in/api/api/user-delete/${id}`,
-        {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ token }),
-        }
-      );
-      const result = await res.json();
-      if (res.ok) {
-        fetchUsers(); // refresh list
-      } else {
-        alert(result.message || "Delete failed");
-      }
-    } catch (err) {
-      alert("Network error while deleting user.");
-    }
-  };
-
   return (
     <Layout>
       <div className="bg-white p-4 mb-2 rounded-lg dark:border-gray-700 mt-14">
@@ -126,12 +89,12 @@ export default function List() {
               Add
             </Link>
           </div>
-          {error && <p className="text-red-500 mb-3">{error}</p>}
+          {isError && <p className="text-red-500 mb-3">{error?.data?.message || "Failed to load users"}</p>}
           <Table
             cols={columns}
             data={users}
             page={page}
-            totalPages={totalPages}
+            totalPages={result?.lastPage || 1}
             handlePageChange={handlePageChange}
             handleRowsPerPageChange={handleRowsPerPageChange}
             isTableLoading={isLoading}

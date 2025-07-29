@@ -6,21 +6,52 @@ import List from "./pages/List";
 import Stepperform from "./pages/Stepperform";
 import Product from "./pages/sales/Listproduct";
 import Addproduct from "./pages/sales/Addproduct";
+import ProtectedRoute from './component/ProtectedRoute';
 function App() {
- return (
-<>
-<div className="App">
-      <Router>
-        <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/List" element={<List />} />
-        <Route path="/Stepperform" element={<Stepperform />} />
-        <Route path="/Product" element={<Product />} />
-        <Route path="/Add-product" element={<Addproduct />} />
-       </Routes>
-      </Router>
-    </div>
-</>
+  return (
+    <>
+      <div className="App">
+        <Router>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route
+              path="/List"
+              element={
+                <ProtectedRoute>
+                  <List />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/Stepperform"
+              element={
+                <ProtectedRoute>
+                  <Stepperform />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/Product"
+              element={
+                <ProtectedRoute>
+                  <Product />
+                </ProtectedRoute>
+              }
+            /> <Route
+              path="/Add-product"
+              element={
+                <ProtectedRoute>
+                  <Addproduct />
+                </ProtectedRoute>
+              }
+            />
+            {/* <Route path="/Stepperform" element={<Stepperform />} /> */}
+            {/* <Route path="/Product" element={<Product />} /> */}
+            {/* <Route path="/Add-product" element={<Addproduct />} /> */}
+          </Routes>
+        </Router>
+      </div>
+    </>
   );
 }
 

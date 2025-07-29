@@ -13,7 +13,7 @@ const role = (localStorage.getItem("role") || "").toLowerCase().trim();
       >
         <div className="h-full px-3 pb-4 overflow-y-auto bg-[#250f4f] dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
-            {(role !== "Seller"  || role !== "User") && (
+            {/* {(role !== "Seller"  || role !== "User") && ( */}
               <li>
                 <Link
                   to="/List"
@@ -32,8 +32,8 @@ const role = (localStorage.getItem("role") || "").toLowerCase().trim();
                   <span className="ms-3">Users</span>
                 </Link>
               </li>
-            )}
-            {(role === "Seller" || role === "User") && (
+            {/* )} */}
+            {/* {(role === "Seller" || role === "User") && ( */}
               <li>
                 <Link
                   to="/Product"
@@ -52,7 +52,7 @@ const role = (localStorage.getItem("role") || "").toLowerCase().trim();
                   <span className="ms-3">Product</span>
                 </Link>
               </li>
-            )}
+            {/* )} */}
           </ul>
         </div>
       </aside>
