@@ -16,7 +16,7 @@ export default function Login() {
         try {
             const data = await login({ email, password }).unwrap(); // .unwrap() gives you direct response or throws error
             localStorage.setItem("token", data.token);
-            localStorage.setItem("role", JSON.stringify(data.role));
+            localStorage.setItem("role", data.role);
 
             if (data.role === "Admin") {
                 navigate("/List");
